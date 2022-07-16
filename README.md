@@ -1,2 +1,2 @@
 # AwesomeProjectReactNative
-Practice for react native
+Practice for react native on Development branch
