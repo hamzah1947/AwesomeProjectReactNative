@@ -6,14 +6,16 @@
  * @flow strict-local
  */
 
-import React from 'react';
-import type {Node} from 'react';
+import React, { useState } from 'react';
+import type { Node } from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   useColorScheme,
   View,
 } from 'react-native';
@@ -25,88 +27,60 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+import TextField from './src/components/TextField';
+import { containerStyles } from './src/Styles/ContainerStyles';
+import { normalTextFieldStyles, textFieldStyles } from './src/Styles/TextFieldStyles';
+import * as Yup from 'yup';
+import { Formik, Form, useField, useFormik } from 'formik';
 
 const App: () => Node = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  const initialValues = {
+    email: "hmzmushtaq@gmail.com",
+    password: ""
   };
 
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Please enter a valid email").required("Email is required"),
+    password: Yup.string().required("Please enter password"),
+  });
+
+  const formik = useFormik({
+  });
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <>
+      <View style={containerStyles.containerV1}>
+        <View style={containerStyles.containerV2}>
+
+          <Formik
+
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              setTimeout(() => {
+                alert(JSON.stringify(values, null, 2));
+              }, 400);
+            }}
+          >{({ handleSubmit }) => (
+            <>
+              <View style={textFieldStyles.fieldGroup}>
+                <TextField label={"Email"} name={'email'} />
+              </View>
+              <View style={textFieldStyles.fieldGroup}>
+                <TextField secureTextEntry={true} label={"Password"} name="password" />
+              </View>
+              <View style={textFieldStyles.fieldGroup}>
+                <Button title='Submit' onPress={handleSubmit} />
+              </View>
+            </>
+          )}</Formik>
+
+
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </View>
+    </>
   );
 };
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+
 
 export default App;
